@@ -1,0 +1,200 @@
+\usepackage[marginparwidth=1.25cm,outer=3.25cm,top=0.75in, bottom=0.75in, inner=2cm]{geometry}
+\usepackage{ifthen}
+\usepackage{subfig}
+\usepackage{tikz}
+\usepackage[hang,flushmargin]{footmisc}
+
+\pagestyle{empty}
+\renewcommand{\familydefault}{\sfdefault}
+\setlength\parindent{0pt}
+
+\def\blfootnote{\xdef\@thefnmark{}\@footnotetext} 
+
+
+%% Chord drawing code modified from http://www.texample.net/tikz/examples/guitar-chords/ 
+% Counters
+\newcounter{chords-string}
+\newcounter{chords-fret}
+
+% Variables
+\newcommand{\chordreset}{
+  \def\chordfretstart{1}
+  \def\chordfretend{4}
+}
+\chordreset
+\renewcommand{\footnoterule}{}
+% The chord environmant
+% \begin{chord}
+\newenvironment{drawgrid}
+{
+  % A single note
+  % \single <string> <fret> 
+  \newcommand{\single}[2]{
+    \draw node[single] at (##2,5-##1) {};
+  }
+  % A bar
+  % \bar <startstring> <fret> <text>
+  \renewcommand{\bar}[3]{
+    \draw[bar] (##2,5 - ##1) -- node[midway] {{\footnotesize ##3}} (##2,4);
+  }
+  % No strike
+  % \nostrike <string>
+  \newcommand{\nostrike}[1]{
+    \draw[nostrike] (\chordfretstart-.5,5-##1) +(-135:.2cm) -- +(45:.2cm);
+    \draw[nostrike] (\chordfretstart-.5,5-##1) +(135:.2cm) -- +(-45:.2cm);
+  }
+  \begin{tikzpicture}[
+    single/.style={draw,circle,fill=black,inner sep=0pt, minimum size=0.25cm},
+    bar/.style={cap=round,double,double distance=0.25cm,fill=black},
+    nostrike/.style={line width=.8mm},
+    cm={0,-0.4,0.3,0,(0,0)}
+  ]
+  \draw[use as bounding box, xshift=-0.5cm] (\chordfretstart,1) grid (\chordfretend+1,4);
+}
+{
+  \end{tikzpicture}
+}
+
+\newcounter{songchords}[section]
+\newcounter{marginchords}
+\setcounter{marginchords}{9}
+
+\newcommand{\drawchord}[2]
+{
+\begin{minipage}{1.25cm}
+\begin{center}\large\textbf{#1}\\
+\vspace{4pt}
+\begin{drawgrid}
+#2
+\end{drawgrid}\\
+\end{center}
+\end{minipage}
+}
+
+\newcommand{\chord}[2]{
+	\expandafter\newcounter{chordshown#1}[section]
+	\expandafter\newcommand\csname chordi#1\endcsname
+{\ifthenelse{\arabic{songchords} < \arabic{marginchords}}{%
+\marginpar{%
+\drawchord{#1}{#2}%
+}}%
+{\global\expandafter\def\csname drawchord\arabic{songchords}\endcsname{\drawchord{#1}{#2}}%
+}%
+\stepcounter{songchords}%
+}}
+
+\newcommand\printleftchords{
+\ifthenelse{\arabic{songchords} > \arabic{marginchords}}
+{
+\foreach \num in {\arabic{marginchords},...,\arabic{songchords}}
+{
+\expandafter\csname drawchord\num\endcsname
+}
+}
+{}
+}
+
+\newenvironment{song}[2]{
+\section{#1 -- #2}
+}
+{
+\blfootnote{\printleftchords}
+\newpage
+}
+
+\newcommand{\addchord}[1]{%
+\ifthenelse{\expandafter\arabic{chordshown#1} = 0}%
+{\csname chordi#1\endcsname\expandafter\stepcounter{chordshown#1}}%
+}
+\newcounter{chordcounter}
+
+\newcommand{\C}[1]{\setcounter{chordcounter}{0}\textbf{\foreach \c in {#1}{%
+\ifthenelse{\arabic{chordcounter} = 0}{(}{-}%
+\stepcounter{chordcounter}%
+\c\addchord{\c}})}}
+
+\newcommand{\note}[1]{{\textbf{[#1]}}}
+	
+%\renewcommand{\thesection}[1]{{\centering\textbf\LARGE{#1}}}
+
+\chord{D7}{
+\single 1 3
+\bar 4 2 {}
+}
+\chord{C}{
+\single 1 3
+}
+\chord{F}{
+\single 2 1
+\single 4 2
+}
+\chord{Am}{
+\single 4 2
+}
+\chord{G}{
+\single 1 2
+\single 2 3
+\single 3 2
+}
+\chord{Gsus4}{
+\single 1 3
+\single 2 3
+\single 3 2
+}
+\chord{Fdim7}{
+\single 1 2
+\single 2 1
+\single 3 2
+\single 4 1
+}
+\chord{Am7}{
+}
+\chord{E7}{
+\single 1 2
+\single 3 2
+\single 4 1
+}
+\chord{Fm}{
+\single 1 3
+\single 2 1
+\single 4 2
+}
+\chord{Em}{
+\single 1 2
+\single 2 3
+\single 3 4
+}
+\chord{Dm}{
+\single 2 1
+\single 3 2
+\single 4 2
+}
+\chord{Ab}{
+\bar 4 1 {3rd fret}
+\single 2 2
+\single 4 3
+}
+\chord{Eb}{
+\single 1 1
+\single 2 3
+\single 3 3
+}
+\chord{Gdim7}{
+\single 1 1
+\single 3 1
+}
+\chord{Db}{
+\single 1 4
+\single 2 1
+\single 3 1
+\single 4 1
+}
+\chord{Dbm}{
+\single 1 4
+\single 3 1
+\single 4 1
+}
+\chord{Csus4}{
+\single 1 3
+\single 2 1
+}
