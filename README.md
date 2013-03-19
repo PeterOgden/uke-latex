@@ -23,7 +23,7 @@ This is a very early proof of concept and the library of chords consists solely 
 
 I'm sure the implementation is horrible and would welcome any hints for improving it.
 
-# signs are special in LaTeX so cannot be used in chord names. A capital `S` will be turned into a sharp sign in the printed output.
+`#` signs are special in LaTeX so cannot be used in chord names. A capital `S` will be turned into a sharp sign in the printed output.
 
 Dependencies
 ------------
