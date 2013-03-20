@@ -27,7 +27,8 @@ end
 def parse_chord(s)
   m = /\{define: ([^ ]*) base-fret ([0-9]*) frets ([0-9]*) ([0-9]*) ([0-9]*) ([0-9]*).*/.match(s)
   if !m then 
-    return nil
+    m = /(\S*)\s*(\d*)\s*(\d*)\s*(\d*)\s*(\d*)\s*(\d*)\s*/.match(s)
+    if !m then return nil end
   end
   name = m[1].to_s
   base = m[2].to_i
@@ -52,5 +53,5 @@ end
 
 ARGF.each do |line|
   c = parse_chord(line)
-  write_chord(c) if c
+  write_chord(c) if c and !c.name.empty?
 end

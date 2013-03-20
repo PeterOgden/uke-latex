@@ -35,3 +35,4 @@ The following LaTeX packages are required to build the document:
 * ifthen
 * geomety
 * footmisc
+* etex
