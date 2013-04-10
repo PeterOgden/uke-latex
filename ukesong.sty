@@ -4,6 +4,7 @@
 \usepackage[hang,flushmargin]{footmisc}
 \usepackage{xstring}
 \usepackage{etex}
+\usepackage{marginnote}
 \pagestyle{empty}
 \renewcommand{\familydefault}{\sfdefault}
 \setlength\parindent{0pt}
@@ -57,7 +58,7 @@
 
 \newcounter{songchords}[section]
 \newcounter{marginchords}
-\setcounter{marginchords}{9}
+\setcounter{marginchords}{11}
 
 \newcommand{\formatchord}[1]{\StrSubstitute{#1}{S}{$\sharp$}}
 
@@ -73,17 +74,20 @@
 \end{minipage}
 }
 
-\newcommand{\chord}[2]{
-	\expandafter\newcounter{chordshown#1}[section]
-	\expandafter\newcommand\csname chordi#1\endcsname
-{\ifthenelse{\arabic{songchords} < \arabic{marginchords}}{%
-\marginpar{%
-\drawchord{#1}{#2}%
-}}%
+\newcommand{\chord}[2]{%
+	\expandafter\newcounter{chordshown#1}[section]%
+	\expandafter\newcommand\csname chordi#1\endcsname%
+{%
 {\global\expandafter\def\csname drawchord\arabic{songchords}\endcsname{\drawchord{#1}{#2}}%
 }%
 \stepcounter{songchords}%
 }}
+\newcommand\printmarginchords{
+\ifthenelse{\arabic{songchords} > \arabic{marginchords}}
+{\newcommand\margincount{\arabic{marginchords}}}
+{\newcommand\margincount{\arabic{songchords}}}
+\foreach \num in {0,...,\margincount}
+{\expandafter\csname drawchord\num\endcsname\\}}
 
 \newcommand\printleftchords{
 \ifthenelse{\arabic{songchords} > \arabic{marginchords}}
@@ -100,7 +104,8 @@
 \section{#1 -- #2}
 }
 {
-\blfootnote{\printleftchords}
+\blfootnote{\printleftchords
+\marginnote{\vspace{-1\textheight}\printmarginchords}}
 \newpage
 }
 
